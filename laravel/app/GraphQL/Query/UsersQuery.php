@@ -21,6 +21,10 @@ class UsersQuery extends Query {
     public function args()
     {
         return [
+            // 分页变量
+            'offset' => ['name' => 'offset', 'type' => Type::int()],
+            'limit' => ['name' => 'limit', 'type' => Type::int()],
+
             'id' => ['name' => 'id', 'type' => Type::int()],
             'email' => ['name' => 'email', 'type' => Type::string()],
             'name' => ['name' => 'name', 'type' => Type::string()],
@@ -29,7 +33,9 @@ class UsersQuery extends Query {
 
     public function resolve($root, $args)
     {
-        //var_dump($args);
+        //dd($args);
+        //dd($root);
+        //dd($_GET);exit;
         if(isset($args['id']))
         {
             #return User::find($args['id']);
@@ -41,7 +47,9 @@ class UsersQuery extends Query {
         }
         else
         {
-            return User::all();
+            $limit = isset($args['limit']) ? $args['limit'] : 2;
+            $offset = isset($args['offset']) ? $args['offset'] : 0;
+            return User::offset($offset)->limit($limit)->get();
         }
     }
 

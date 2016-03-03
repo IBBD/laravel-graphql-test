@@ -65,6 +65,53 @@ return GraphQL::type('user');
 
 能否根据参数进行修改，这个待看。
 
+### 分页查询数据
+
+我们使用offset和limit这两个参数来对数据进行分页
+
+```
+http://laravel.test.com/graphql?query=query+FetchUsers{users(offset:1,limit:3){id,email}}
+```
+
+格式化如下：
+
+```
+query FetchUsers {
+    # offset和limit的值会传入到resolve方法中，只要在args中定义好
+    users(offset:1, limit:3) {
+        id,
+        email
+    }
+}
+```
+
+对应服务器的关键代码如下：
+
+
+```php
+class UsersQuery extends Query {
+
+
+    public function args()
+    {
+        return [
+            // 分页变量
+            'offset' => ['name' => 'offset', 'type' => Type::int()],
+            'limit' => ['name' => 'limit', 'type' => Type::int()],
+            ...
+        ];
+    }
+
+    public function resolve($root, $args)
+    {
+        $limit = isset($args['limit']) ? $args['limit'] : 2;
+        $offset = isset($args['offset']) ? $args['offset'] : 0;
+        return User::offset($offset)->limit($limit)->get();
+    }
+}
+```
+
+### 分页传参数
 
 
 
