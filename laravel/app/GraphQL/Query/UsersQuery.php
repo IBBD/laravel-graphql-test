@@ -14,7 +14,8 @@ class UsersQuery extends Query {
 
     public function type()
     {
-        return Type::listOf(GraphQL::type('user'));
+        #return GraphQL::type('user');    # 这里的结果是一行记录
+        return Type::listOf(GraphQL::type('user'));  # 这里的结果是一个数组
     }
 
     public function args()
@@ -31,6 +32,7 @@ class UsersQuery extends Query {
         //var_dump($args);
         if(isset($args['id']))
         {
+            #return User::find($args['id']);
             return User::where('id' , $args['id'])->get();
         }
         else if(isset($args['email']))
