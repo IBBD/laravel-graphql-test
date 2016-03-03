@@ -1,4 +1,4 @@
-# Lumen测试样例项目
+# Laravel与GraphQL测试样例项目
 
 ## 测试的表结构
 
