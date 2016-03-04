@@ -21,13 +21,14 @@ class UpdateUserPasswordMutation extends Mutation {
     public function args()
     {
         return [
-            'id' => ['name' => 'id', 'type' => Type::nonNull(Type::string())],
+            'id' => ['name' => 'id', 'type' => Type::nonNull(Type::int())],
             'password' => ['name' => 'password', 'type' => Type::nonNull(Type::string())]
         ];
     }
 
     public function resolve($root, $args)
     {
+        dd($this);
         $user = User::find($args['id']);
         if(!$user)
         {

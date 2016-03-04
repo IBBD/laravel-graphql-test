@@ -4,11 +4,17 @@ namespace App\GraphQL\Fields;
 use GraphQL\Type\Definition\Type;
 use Folklore\GraphQL\Support\Field;
 
-class PictureField extends Field {
+class PictureField extends Field 
+{
 
     protected $attributes = [
         'description' => 'A picture'
     ];
+
+    public function type()
+    {
+        return Type::string();
+    }
 
     public function args()
     {
@@ -26,9 +32,9 @@ class PictureField extends Field {
 
     protected function resolve($root, $args)
     {
-        $width = isset($args['width']) ? $args['width']:100;
-        $height = isset($args['height']) ? $args['height']:100;
-        return 'http://placehold.it/'.$width.'x'.$height;
+        $width = isset($args['width']) ? $args['width'] : 100;
+        $height = isset($args['height']) ? $args['height'] : 100;
+        return 'http://www.ibbd.net/' . $width . 'x' . $height;
     }
 
 }

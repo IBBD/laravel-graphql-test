@@ -2,6 +2,8 @@
 
 ## 查询
 
+所有查询操作的语句，都以`query`开始。
+
 ### 查询一个表的所有数据
 
 ```
@@ -91,7 +93,6 @@ query FetchUsers {
 ```php
 class UsersQuery extends Query {
 
-
     public function args()
     {
         return [
@@ -112,6 +113,64 @@ class UsersQuery extends Query {
 ```
 
 ### 分页传参数
+
+在分页查询时，传参数是这样`users(offset:1, limit:3)`，可以实现，不过不够灵活，这里可以引入变量：
+
+```
+http://laravel.test.com/graphql?query=query+FetchUsers($offset:Int){users(offset:$offset){id,email}}&params={%22offset%22:1}
+```
+
+通过一个`params`变量把offset参数传给查询语句，注意`params`这个参数必须写成标准的json格式，因为在php解释时的代码是：
+
+```php
+$params = json_decode($params, true);
+```
+
+如果不是标准的，将会得不到这个值。
+
+### 关联多表查询
+
+
+## 更改: mutation
+
+### 增加
+
+### 删除
+
+### 修改
+
+```
+http://laravel.test.com/graphql?query=mutation{updateUserPassword(id:1,password:%22newpassword%22){id}}
+```
+
+上面的url是根据文档来的，但是这样请求会报错：
+
+```json
+{
+    data: null,
+    errors: [
+        {
+            message: "Syntax Error GraphQL request (1:9) Expected Name, found { 1: mutation{updateUserPassword(id:1,password:"newpassword"){id}} ^ ",
+            locations: [
+                {
+                    line: 1,
+                    column: 9
+                }
+            ]
+        }
+    ]
+}
+```
+
+需要增加一个name：
+
+```
+http://laravel.test.com/graphql?query=mutation+update{updateUserPassword(id:1,password:%22newpassword%22){id}}
+```
+
+注意：
+update执行的时候，会自动设置`updated_at`这个字段, 当然这个是框架的问题。
+
 
 
 

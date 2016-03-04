@@ -56,7 +56,8 @@ return [
     //
     'schema' => [
         'query' => [
-            'users' => '\App\GraphQL\Query\UsersQuery'
+            'users' => '\App\GraphQL\Query\UsersQuery',
+            'books' => '\App\GraphQL\Query\BooksQuery'
         ],
         'mutation' => [
             'updateUserPassword' => '\App\GraphQL\Mutation\UpdateUserPasswordMutation',
@@ -74,7 +75,8 @@ return [
     // ]
     //
     'types' => [
-        'user' => '\App\GraphQL\Type\UserType'
+        'user' => '\App\GraphQL\Type\UserType',
+        'book' => '\App\GraphQL\Type\BookType',
     ]
     
 ];

@@ -1,5 +1,10 @@
 # Laravel与GraphQL测试样例项目
 
+## 相关资源
+
+- https://github.com/Folkloreatelier/laravel-graphql
+- https://github.com/webonyx/graphql-php
+
 ## 测试的表结构
 
 ```sql
