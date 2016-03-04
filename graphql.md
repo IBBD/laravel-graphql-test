@@ -130,6 +130,9 @@ $params = json_decode($params, true);
 
 ### 关联多表查询
 
+```
+http://laravel.test.com/graphql?query=query+FetchUserByID($offset:Int){users(offset:$offset){id,email,name,picture(width:200),books(limit:5){id,name}}}&params={%22offset%22:0}
+```
 
 ## 更改: mutation
 
@@ -145,7 +148,7 @@ http://laravel.test.com/graphql?query=mutation{updateUserPassword(id:1,password:
 
 上面的url是根据文档来的，但是这样请求会报错：
 
-```json
+```
 {
     data: null,
     errors: [
