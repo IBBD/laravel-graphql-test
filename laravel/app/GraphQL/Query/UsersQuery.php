@@ -6,6 +6,7 @@ use GraphQL\Type\Definition\Type;
 use Folklore\GraphQL\Support\Query;    
 use GraphQL\Type\Definition\ResolveInfo;
 use App\User;
+use Illuminate\Support\Facades\DB;
 
 class UsersQuery extends Query {
 
@@ -40,6 +41,7 @@ class UsersQuery extends Query {
         //dd($fields);
         //dd($info);
         //dd($root);
+        DB::enableQueryLog();
         if(isset($args['id'])) {
             $users = User::where('id' , $args['id'])->get();
         }
@@ -51,16 +53,21 @@ class UsersQuery extends Query {
 
             $users = new User();
             $users = $users->offset($offset)->limit($limit);
-            if (isset($fields['books'])) {
-                $users->with('books');
-            }
             $users = $users->get();
 
-            //echo "<pre>";
-            //foreach ($users as $u) {
-                //var_dump($u->books);
-            //}
-            //dd($users->books);
+            //dump($users);
+            if (isset($fields['books']) && $users) {
+                foreach ($users as &$u) {
+                    $books = DB::table('books')->leftJoin('user_book', 'books.id', '=', 'user_book.book_id')
+                        ->where('user_book.user_id', $u->id)
+                        ->get();
+                    $u->books = $books;
+                }
+            }
+            //dump($users);
+            //dd($users);
+            //$queries = DB::getQueryLog();
+            //dd($queries);
         }
 
         return $users;
