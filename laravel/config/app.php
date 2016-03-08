@@ -157,6 +157,7 @@ return [
         App\Providers\RouteServiceProvider::class,
 
         Folklore\GraphQL\GraphQLServiceProvider::class,
+        Tymon\JWTAuth\Providers\JWTAuthServiceProvider::class,
 
     ],
 
@@ -205,6 +206,7 @@ return [
         'View'      => Illuminate\Support\Facades\View::class,
 
         'GraphQL'   => Folklore\GraphQL\Support\Facades\GraphQL::class,
+        'JWTAuth'   => Tymon\JWTAuth\Facades\JWTAuth::class,
 
     ],
 

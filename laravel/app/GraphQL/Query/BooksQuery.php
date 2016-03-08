@@ -39,6 +39,8 @@ class BooksQuery extends Query {
         $books = new Book();
         if ($root) {
             $root_class = get_class($root);
+            //dump($root instanceof App\User);
+            //dump($root_class);
             // 这里硬编码，待优化 @todo
             if ('App\User' === $root_class) {
                 $books = $books->leftJoin('user_book', 'books.id', '=', 'user_book.book_id')
