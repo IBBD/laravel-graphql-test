@@ -28,18 +28,33 @@ class BooksQuery extends Query {
         ];
     }
 
+    /**
+     * @param object $root 上一级的查询结果
+     * @param array $args 查询参数
+     */
     public function resolve($root, $args)
     {
+        //dump($root);
+        //dump(get_class($root));
+        $books = new Book();
+        if ($root) {
+            $root_class = get_class($root);
+            // 这里硬编码，待优化 @todo
+            if ('App\User' === $root_class) {
+                $books = $books->leftJoin('user_book', 'books.id', '=', 'user_book.book_id')
+                    ->where('user_book.user_id', $root->id);
+            }
+        }
         if(isset($args['id'])) {
-            return Book::where('id' , $args['id'])->get();
+            return $books->where('id' , $args['id'])->get();
         }
         else if(isset($args['email'])) {
-            return Book::where('email', $args['email'])->get();
+            return $books->where('email', $args['email'])->get();
         }
 
         $limit = isset($args['limit']) ? $args['limit'] : 2;
         $offset = isset($args['offset']) ? $args['offset'] : 0;
-        return Book::offset($offset)->limit($limit)->get();
+        return $books->offset($offset)->limit($limit)->get();
     }
 
 }

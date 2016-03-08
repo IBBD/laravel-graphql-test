@@ -37,39 +37,33 @@ class UsersQuery extends Query {
 
     public function resolve($root, $args, ResolveInfo $info)
     {
-        $fields = $info->getFieldSelection();
-        //dd($fields);
         //dd($info);
         //dd($root);
+        $users = new User();
+        if ($root) {
+            $root_class = get_class($root);
+            // 这里硬编码，待优化 @todo
+            if ('App\Book' === $root_class) {
+                $users = $users->leftJoin('user_book', 'users.id', '=', 'user_book.user_id')
+                    ->where('user_book.book_id', $root->id);
+            }
+        }
+
         DB::enableQueryLog();
         if(isset($args['id'])) {
-            $users = User::where('id' , $args['id'])->get();
+            $users = $users->where('id' , $args['id'])->get();
         }
         else if(isset($args['email'])) {
-            $users = User::where('email', $args['email'])->get();
+            $users = $users->where('email', $args['email'])->get();
         } else {
             $limit = isset($args['limit']) ? $args['limit'] : 2;
             $offset = isset($args['offset']) ? $args['offset'] : 0;
 
-            $users = new User();
-            $users = $users->offset($offset)->limit($limit);
-            $users = $users->get();
-
-            //dump($users);
-            if (isset($fields['books']) && $users) {
-                foreach ($users as &$u) {
-                    $books = DB::table('books')->leftJoin('user_book', 'books.id', '=', 'user_book.book_id')
-                        ->where('user_book.user_id', $u->id)
-                        ->get();
-                    $u->books = $books;
-                }
-            }
-            //dump($users);
-            //dd($users);
-            //$queries = DB::getQueryLog();
-            //dd($queries);
+            $users = $users->offset($offset)->limit($limit)->get();
         }
 
+        //$queries = DB::getQueryLog();
+        //dd($queries);
         return $users;
     }
 

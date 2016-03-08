@@ -1,5 +1,4 @@
 <?php
-
 namespace App\GraphQL\Mutation;
 
 use GraphQL;
@@ -7,10 +6,10 @@ use GraphQL\Type\Definition\Type;
 use Folklore\GraphQL\Support\Mutation;    
 use App\User;
 
-class UpdateUserEmailMutation extends Mutation {
+class DelUserMutation extends Mutation {
 
     protected $attributes = [
-        'name' => 'UpdateUserEmail'
+        'name' => 'DelUser'
     ];
 
     public function type()
@@ -21,16 +20,7 @@ class UpdateUserEmailMutation extends Mutation {
     public function args()
     {
         return [
-            'id' => ['name' => 'id', 'type' => Type::string()],
-            'email' => ['name' => 'password', 'type' => Type::string()]
-        ];
-    }
-
-    public function rules()
-    {
-        return [
-            'id' => ['required'],
-            'email' => ['required', 'email']
+            'id' => ['name' => 'id', 'type' => Type::nonNull(Type::int())],
         ];
     }
 
@@ -38,11 +28,10 @@ class UpdateUserEmailMutation extends Mutation {
     {
         $user = User::find($args['id']);
         if (!$user) {
-            return null;
+            throw new \Exception('Can\'t find user where id=' . $args['id']);
         }
 
-        $user->email = $args['email'];
-        $user->save();
+        $user->delete();
 
         return $user;
     }

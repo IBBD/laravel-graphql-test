@@ -26,12 +26,13 @@ class PictureField extends Field
             'height' => [
                 'type' => Type::int(),
                 'description' => 'The height of the picture'
-            ]
+            ],
         ];
     }
 
     protected function resolve($root, $args)
     {
+        //var_dump($args);
         $width = isset($args['width']) ? $args['width'] : 100;
         $height = isset($args['height']) ? $args['height'] : 100;
         return 'http://www.ibbd.net/' . $width . 'x' . $height;

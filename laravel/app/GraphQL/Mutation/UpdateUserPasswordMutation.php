@@ -28,15 +28,13 @@ class UpdateUserPasswordMutation extends Mutation {
 
     public function resolve($root, $args)
     {
-        dd($this);
+        //dd($this);
         $user = User::find($args['id']);
-        if(!$user)
-        {
-            return null;
-
+        if (!$user) {
+            throw new \Exception('Can\'t find user where id=' . $args['id']);
         }
 
-        $user->password = bcrypt($args['password']);
+        $user->password = $args['password'];
         $user->save();
 
         return $user;

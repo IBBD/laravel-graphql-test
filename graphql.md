@@ -134,11 +134,106 @@ $params = json_decode($params, true);
 http://laravel.test.com/graphql?query=query+FetchUserByID($offset:Int){users(offset:$offset){id,email,name,picture(width:200),books(limit:5){id,name}}}&params={%22offset%22:0}
 ```
 
+注意，在实现上，不要使用传统的数据库的关联查询的思路去考虑实现，而应该将每个对象（如user，book等）独立考虑，组合查询条件。
+
+`UserType`中的字段定义如下：
+
+```php
+public function fields()
+{
+    return [
+        'id' => [
+            'type' => Type::nonNull(Type::int()),
+            'description' => 'The id of the user' 
+        ],
+        'name' => [
+            'type' => Type::string(),
+            'description' => 'The name of user'
+        ],
+        'email' => [
+            'type' => Type::string(),
+            'description' => 'The email of user'
+        ],
+        'picture' => \App\GraphQL\Fields\PictureField::class,
+        'books' => \App\GraphQL\Query\BooksQuery::class,
+    ];
+}
+```
+
+对应到`BooksQuery`，可以利用resolve函数中的`$root`参数：
+
+```php
+public function resolve($root, $args)
+{
+    $books = new Book();
+    if ($root) {
+        $root_class = get_class($root);
+        if ('App\User' === $root_class) {
+            // 这里硬编码有点别扭
+            $books = $books->leftJoin('user_book', 'books.id', '=', 'user_book.book_id')
+                ->where('user_book.user_id', $root->id);
+        }
+    }
+    // more somethings ...
+}
+```
+
+最后，输出的结果格式如下：
+
+```json
+{
+    "data":{
+        "users":[
+            {
+                "id":1,
+                "email":"name1@ibbd.net",
+                "name":"name1",
+                "picture":"http:\/\/www.ibbd.net\/200x100",
+                "books":[
+                    {"id":8,"name":"book name 1"},
+                    {"id":10,"name":"book name 3"}
+                ]
+            },
+            {
+                "id":2,
+                "email":"name2@ibbd.net",
+                "name":"name2",
+                "picture":"http:\/\/www.ibbd.net\/200x100",
+                "books":[
+                    {"id":10,"name":"book name 3"}
+                ]
+            }
+        ]
+    }
+}
+```
+
+
 ## 更改: mutation
 
 ### 增加
 
+```
+http://laravel.test.com/graphql?query=mutation+add{addUser(name:%22Alex%22,email:%22alex@ibbd.net%22,password:%22newpassword%22){id}}
+```
+
+正常的话返回结果如下：
+
+```json
+{"data":{"addUser":{"id":8}}}
+```
+
 ### 删除
+
+```
+http://laravel.test.com/graphql?query=mutation+del{deluser(id:7){id}}
+```
+
+正常的话，会返回结果：
+
+```json
+{"data":{"delUser":{"id":6}}}
+```
 
 ### 修改
 
@@ -173,11 +268,4 @@ http://laravel.test.com/graphql?query=mutation+update{updateUserPassword(id:1,pa
 
 注意：
 update执行的时候，会自动设置`updated_at`这个字段, 当然这个是框架的问题。
-
-
-
-
-
-
-
 

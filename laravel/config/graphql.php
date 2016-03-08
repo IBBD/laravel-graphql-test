@@ -60,8 +60,10 @@ return [
             'books' => '\App\GraphQL\Query\BooksQuery'
         ],
         'mutation' => [
+            'addUser' => '\App\GraphQL\Mutation\AddUserMutation',
+            'delUser' => '\App\GraphQL\Mutation\DelUserMutation',
             'updateUserPassword' => '\App\GraphQL\Mutation\UpdateUserPasswordMutation',
-            'updateUserEmail' => '\App\GraphQL\Mutation\UpdateUserEmailMutation'
+            'updateUserEmail' => '\App\GraphQL\Mutation\UpdateUserEmailMutation',
         ]
     ],
     
